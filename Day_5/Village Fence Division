@@ -1,0 +1,23 @@
+import java.io.*;
+import java.util.*;
+
+class TestClass {
+    public static void main(String args[]) throws Exception {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine().trim());
+        String village = br.readLine().trim();
+
+        char[] result = village.toCharArray();
+
+        for(int i = 0; i < n; i++){
+            if(result[i] == '.'){
+                result[i] = 'B';
+            }
+        }
+
+        System.out.println("YES");
+        System.out.println(new String(result));
+    }
+}
