@@ -1,0 +1,96 @@
+import java.io.*;
+import java.util.*;
+
+class TestClass {
+    public static void main(String args[]) throws Exception {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine().trim());
+
+        while (T-- > 0) {
+
+            int n = Integer.parseInt(br.readLine().trim());
+            String[] s = br.readLine().split(" ");
+
+            int[] arr = new int[n];
+
+            for (int i = 0; i < n; i++)
+                arr[i] = Integer.parseInt(s[i]);
+
+            int totalOR = 0;
+            int[] totalBit = new int[32];
+
+            for (int x : arr) {
+                totalOR |= x;
+
+                for (int b = 0; b < 32; b++) {
+                    if ((x & (1 << b)) != 0)
+                        totalBit[b]++;
+                }
+            }
+
+            int[] windowBit = new int[32];
+            int windowOR = 0;
+
+            int left = 0;
+            int minLen = Integer.MAX_VALUE;
+            int count = 0;
+
+            for (int right = 0; right < n; right++) {
+
+                int val = arr[right];
+                windowOR |= val;
+
+                for (int b = 0; b < 32; b++)
+                    if ((val & (1 << b)) != 0)
+                        windowBit[b]++;
+
+                while (left <= right) {
+
+                    boolean outsideHasAllBits = true;
+
+                    for (int b = 0; b < 32; b++) {
+                        if ((totalOR & (1 << b)) != 0) {
+                            if (totalBit[b] - windowBit[b] == 0) {
+                                outsideHasAllBits = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (windowOR == totalOR && outsideHasAllBits) {
+
+                        int len = right - left + 1;
+
+                        if (len < minLen) {
+                            minLen = len;
+                            count = 1;
+                        } else if (len == minLen) {
+                            count++;
+                        }
+
+                        int remove = arr[left];
+
+                        for (int b = 0; b < 32; b++)
+                            if ((remove & (1 << b)) != 0)
+                                windowBit[b]--;
+
+                        left++;
+
+                        windowOR = 0;
+                        for (int i = left; i <= right; i++)
+                            windowOR |= arr[i];
+
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            if (minLen == Integer.MAX_VALUE)
+                System.out.println(-1);
+            else
+                System.out.println(minLen + " " + count);
+        }
+    }
+}
